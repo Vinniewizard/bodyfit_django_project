@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+
+{% block title %}Analysis Results - BodyFit Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="text-center mb-5">
+                <h1><i class="fas fa-check-circle text-success"></i> Analysis Complete</h1>
+                <p class="lead">Your body shape analysis results are ready</p>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-heartbeat fa-4x text-primary mb-3"></i>
+                            <h3>Body Shape</h3>
+                            <h2 class="display-4 text-primary" id="bodyShape">{{ body_shape }}</h2>
+                            <p class="text-muted">Your dominant body type</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-bullseye fa-4x text-success mb-3"></i>
+                            <h3>Confidence Score</h3>
+                            <h2 class="display-4 text-success" id="confidenceScore">{{ confidence }}%</h2>
+                            <p class="text-muted">AI analysis accuracy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-ruler"></i> Your Measurements</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4>Bust</h4>
+                                <h2 class="text-primary" id="bustMeasurement">{{ bust }} cm</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4>Waist</h4>
+                                <h2 class="text-primary" id="waistMeasurement">{{ waist }} cm</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h4>Hips</h4>
+                                <h2 class="text-primary" id="hipsMeasurement">{{ hips }} cm</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Fashion Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recommendations">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-shirt"></i> Outfit Examples For You</h5>
+                    <button class="btn btn-sm btn-outline-primary" id="galleryMatchButton">
+                        <i class="fas fa-images"></i> View More
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="outfitExamples"></div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Body Shape Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="bodyRatioChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <button class="btn btn-primary w-100" onclick="window.location.href='/gallery/'">
+                        <i class="fas fa-images"></i> View Fashion Gallery
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-outline-primary w-100" onclick="window.location.href='/dashboard/'">
+                        <i class="fas fa-chart-line"></i> Go to Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>Want to analyze another image?</h5>
+                    <p>Upload a new photo for a fresh analysis</p>
+                    <button class="btn btn-success" onclick="window.location.href='/'">
+                        <i class="fas fa-redo"></i> New Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const recommendationGuide = {
+    Pear: {
+        tips: {
+            Tops: 'Choose brighter or structured tops, puff sleeves, boat necks, and detailed necklines to draw attention upward.',
+            Bottoms: 'Use dark straight-leg trousers, bootcut jeans, and A-line skirts that skim the hips cleanly.',
+            Dresses: 'A-line, fit-and-flare, and wrap dresses balance the lower body beautifully.',
+            Accessories: 'Statement earrings, necklaces, scarves, and shoulder bags help lift focus toward the face and shoulders.'
+        },
+        outfits: [
+            {
+                title: 'Structured White Blouse',
+                type: 'Top',
+                image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=80',
+                detail: 'A light structured blouse balances wider hips by adding interest around the shoulders.'
+            },
+            {
+                title: 'Coral A-Line Dress',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=700&q=80',
+                detail: 'The A-line skirt skims the hips while the color brings attention upward.'
+            },
+            {
+                title: 'Cropped Denim Jacket',
+                type: 'Layer',
+                image: 'https://images.unsplash.com/photo-1551232864-3f0890e580d9?auto=format&fit=crop&w=700&q=80',
+                detail: 'A cropped jacket defines the waist and adds structure to the upper body.'
+            }
+        ]
+    },
+    Apple: {
+        tips: {
+            Tops: 'Pick V-necks, soft tunics, longline shirts, and flowing fabrics that create vertical movement.',
+            Bottoms: 'Slim, straight, or ankle-length trousers show the legs and keep the look clean.',
+            Dresses: 'Empire waist, shift, and wrap dresses work well when they skim rather than cling.',
+            Accessories: 'Long necklaces, open jackets, and vertical details help lengthen the torso.'
+        },
+        outfits: [
+            {
+                title: 'Ruby V-Neck Tunic',
+                type: 'Top',
+                image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=700&q=80',
+                detail: 'A V-neckline opens the upper body and fluid fabric avoids tightness at the middle.'
+            },
+            {
+                title: 'Navy Longline Jacket',
+                type: 'Layer',
+                image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=700&q=80',
+                detail: 'The long line creates a smooth vertical shape over the torso.'
+            },
+            {
+                title: 'Purple Evening Column',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=700&q=80',
+                detail: 'A sleek column shape gives polish without adding bulk.'
+            }
+        ]
+    },
+    Hourglass: {
+        tips: {
+            Tops: 'Choose fitted tops, wrap blouses, sweetheart necklines, and soft knits that follow the waist.',
+            Bottoms: 'High-waisted trousers, pencil skirts, and bootcut jeans keep the natural proportions balanced.',
+            Dresses: 'Wrap, belted, body-skimming, and fit-and-flare dresses highlight the waist.',
+            Accessories: 'Belts and waist-focused details are especially useful.'
+        },
+        outfits: [
+            {
+                title: 'Emerald Wrap Dress',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=700&q=80',
+                detail: 'Wrap styling follows curves and naturally defines the waist.'
+            },
+            {
+                title: 'Black Belted Midi',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=80',
+                detail: 'A belt keeps the silhouette clean and balanced.'
+            },
+            {
+                title: 'Blue Satin Slip Dress',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1550639525-c97d455acf70?auto=format&fit=crop&w=700&q=80',
+                detail: 'Fluid fabric follows the figure without overwhelming it.'
+            }
+        ]
+    },
+    Rectangle: {
+        tips: {
+            Tops: 'Peplum tops, ruching, cropped jackets, and textured fabrics help create shape.',
+            Bottoms: 'Pleated skirts, tapered trousers, and high-waisted styles add definition.',
+            Dresses: 'Fit-and-flare, shirt dresses with belts, and color-blocked dresses create curves.',
+            Accessories: 'Belts, layered necklaces, and waist bags add a focal point.'
+        },
+        outfits: [
+            {
+                title: 'Blue Peplum Top',
+                type: 'Top',
+                image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80',
+                detail: 'Peplum volume creates waist and hip shape.'
+            },
+            {
+                title: 'Pink Fit-and-Flare',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=700&q=80',
+                detail: 'The flare adds movement and curve through the lower body.'
+            },
+            {
+                title: 'Green Utility Jacket',
+                type: 'Layer',
+                image: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=700&q=80',
+                detail: 'Structure and pockets add shape without looking overdone.'
+            }
+        ]
+    },
+    'Inverted Triangle': {
+        tips: {
+            Tops: 'Use simple necklines, darker tops, soft fabrics, and minimal shoulder detail.',
+            Bottoms: 'Wide-leg trousers, full skirts, and brighter bottoms balance the shoulders.',
+            Dresses: 'A-line dresses, full-skirt dresses, and V-necks create better balance.',
+            Accessories: 'Keep upper-body accessories simple and use color or detail near the lower body.'
+        },
+        outfits: [
+            {
+                title: 'Wide-Leg Cream Trouser',
+                type: 'Bottom',
+                image: 'https://images.unsplash.com/photo-1542060748-10c28b62716f?auto=format&fit=crop&w=700&q=80',
+                detail: 'Wide-leg volume balances stronger shoulders.'
+            },
+            {
+                title: 'Olive Full Skirt Set',
+                type: 'Dress',
+                image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=80',
+                detail: 'Full lower volume creates a balanced silhouette.'
+            },
+            {
+                title: 'Black Wide-Leg Trouser',
+                type: 'Bottom',
+                image: 'https://images.unsplash.com/photo-1554412933-514a83d2f3c8?auto=format&fit=crop&w=700&q=80',
+                detail: 'A clean trouser shape grounds the look.'
+            }
+        ]
+    }
+};
+
+// Load analysis results from URL parameters or localStorage
+function loadResults() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Try to get results from URL params first
+    const bodyShape = urlParams.get('body_shape') || localStorage.getItem('lastBodyShape') || '{{ body_shape }}';
+    const confidence = urlParams.get('confidence') || localStorage.getItem('lastConfidence') || '{{ confidence }}';
+    const bust = urlParams.get('bust') || localStorage.getItem('lastBust') || '{{ bust }}';
+    const waist = urlParams.get('waist') || localStorage.getItem('lastWaist') || '{{ waist }}';
+    const hips = urlParams.get('hips') || localStorage.getItem('lastHips') || '{{ hips }}';
+    
+    document.getElementById('bodyShape').textContent = bodyShape;
+    document.getElementById('confidenceScore').textContent = confidence + '%';
+    document.getElementById('bustMeasurement').textContent = bust + ' cm';
+    document.getElementById('waistMeasurement').textContent = waist + ' cm';
+    document.getElementById('hipsMeasurement').textContent = hips + ' cm';
+    renderRecommendations(bodyShape);
+    renderOutfitExamples(bodyShape);
+    
+    // Create body ratio chart
+    createBodyRatioChart(bust, waist, hips);
+}
+
+function renderRecommendations(bodyShape) {
+    const guide = recommendationGuide[bodyShape] || recommendationGuide.Pear;
+    const styles = ['info', 'success', 'warning', 'secondary'];
+    document.getElementById('recommendations').innerHTML = Object.entries(guide.tips).map(([category, text], index) => `
+        <div class="alert alert-${styles[index]}">
+            <h6><i class="fas fa-check"></i> ${category}</h6>
+            <p class="mb-0">${text}</p>
+        </div>
+    `).join('');
+}
+
+function renderOutfitExamples(bodyShape) {
+    const guide = recommendationGuide[bodyShape] || recommendationGuide.Pear;
+    document.getElementById('galleryMatchButton').onclick = () => {
+        window.location.href = `/gallery/?body_shape=${encodeURIComponent(bodyShape)}`;
+    };
+    document.getElementById('outfitExamples').innerHTML = guide.outfits.map(outfit => `
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <img src="${outfit.image}" alt="${outfit.title}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">${outfit.type}</span>
+                    <h6>${outfit.title}</h6>
+                    <p class="small text-muted mb-0">${outfit.detail}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function createBodyRatioChart(bust, waist, hips) {
+    const ctx = document.getElementById('bodyRatioChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Bust', 'Waist', 'Hips'],
+            datasets: [{
+                label: 'Your Measurements',
+                data: [bust, waist, hips],
+                backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadResults();
+});
+</script>
+{% endblock %}

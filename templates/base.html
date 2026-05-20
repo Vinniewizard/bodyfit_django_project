@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BodyFit - Professional Body Shape Analysis{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #0f766e;
+            --accent-color: #f59e0b;
+            --success-color: #48bb78;
+            --danger-color: #f56565;
+            --dark-bg: #111827;
+            --light-text: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fb;
+            min-height: 100vh;
+            transition: background 0.3s ease;
+            color: #172033;
+        }
+
+        body.dark-mode {
+            background: #111827;
+            color: var(--light-text);
+        }
+
+        body.dark-mode .card {
+            background-color: #2d3748;
+            border-color: #4a5568;
+            color: var(--light-text);
+        }
+
+        body.dark-mode .navbar {
+            background-color: #1a202c !important;
+            border-bottom-color: #4a5568;
+        }
+
+        body.dark-mode .btn-outline-light {
+            color: var(--light-text);
+            border-color: var(--light-text);
+        }
+
+        body.dark-mode .btn-outline-light:hover {
+            background-color: var(--light-text);
+            color: #1a202c;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 1px 18px rgba(15, 23, 42, 0.08);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.94), rgba(15, 118, 110, 0.92)), url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1600&q=80') center/cover;
+            padding: 60px 20px;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 400px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .dark-mode-toggle {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: rotate(20deg);
+        }
+
+        footer {
+            background: #111827;
+            color: #e5e7eb;
+            text-align: center;
+            padding: 30px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-heartbeat"></i> BodyFit
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gallery/">Gallery</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Account
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/login/">Login</a></li>
+                            <li><a class="dropdown-item" href="/register/">Register</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary btn-sm ms-2" id="darkModeToggle" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-border text-light loading-spinner" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 BodyFit Pro. All rights reserved. | Professional Body Shape Analysis System</p>
+        <p>
+            <a href="#" class="text-light text-decoration-none">Privacy Policy</a> |
+            <a href="#" class="text-light text-decoration-none">Terms of Service</a> |
+            <a href="#" class="text-light text-decoration-none">Contact Us</a>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Set up axios with auth token
+        const accessToken = localStorage.getItem('access_token');
+        if (accessToken) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        // Dark mode toggle with user profile sync
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        // Load dark mode preference
+        async function loadDarkModePreference() {
+            const localDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            // Try to load from user profile if authenticated
+            try {
+                const response = await axios.get('/api/profiles/me/');
+                const profileDarkMode = response.data.dark_mode;
+                
+                // Sync with server preference
+                if (profileDarkMode !== localDarkMode) {
+                    localStorage.setItem('darkMode', profileDarkMode);
+                }
+                
+                applyDarkMode(profileDarkMode);
+            } catch (error) {
+                // If not authenticated, use local storage
+                applyDarkMode(localDarkMode);
+            }
+        }
+
+        function applyDarkMode(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        darkModeToggle.addEventListener('click', async () => {
+            const isDark = !document.body.classList.contains('dark-mode');
+            applyDarkMode(isDark);
+            localStorage.setItem('darkMode', isDark);
+            
+            // Sync with server if authenticated
+            try {
+                await axios.post('/api/profiles/toggle_dark_mode/');
+            } catch (error) {
+                console.error('Error syncing dark mode with server:', error);
+            }
+        });
+
+        // Initialize dark mode on page load
+        loadDarkModePreference();
+
+        // Show loading spinner
+        function showLoading() {
+            document.querySelector('.loading-spinner').classList.add('active');
+        }
+
+        // Hide loading spinner
+        function hideLoading() {
+            document.querySelector('.loading-spinner').classList.remove('active');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} notification`;
+            notification.innerHTML = `
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

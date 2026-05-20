@@ -1,0 +1,524 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - BodyFit Pro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+            <p class="text-muted">Welcome back! Here's your fashion analytics overview.</p>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="window.location.href='/gallery/'">
+                <i class="fas fa-upload"></i> Upload Image
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Images</h6>
+                            <h3 id="totalImages">0</h3>
+                        </div>
+                        <i class="fas fa-image fa-2x text-primary"></i>
+                    </div>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> +12% this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Body Analyses</h6>
+                            <h3 id="totalAnalyses">0</h3>
+                        </div>
+                        <i class="fas fa-heartbeat fa-2x text-success"></i>
+                    </div>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> +8% this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Avg Confidence</h6>
+                            <h3 id="avgConfidence">0%</h3>
+                        </div>
+                        <i class="fas fa-bullseye fa-2x text-warning"></i>
+                    </div>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> +2% this month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Notifications</h6>
+                            <h3 id="unreadNotifications">0</h3>
+                        </div>
+                        <i class="fas fa-bell fa-2x text-danger"></i>
+                    </div>
+                    <small class="text-muted">Unread messages</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Body Shape Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="bodyShapeChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Style Preferences</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="styleChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fit Recommendations Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-magic"></i> Supported Fit Versions</h5>
+                    <span class="badge bg-primary">Photo guided</span>
+                </div>
+                <div class="card-body">
+                    <div id="dressRecommendations" class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Recent Analyses</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recentAnalyses" class="list-group list-group-flush">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-images"></i> Recent Uploads</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recentUploads" class="list-group list-group-flush">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-bell"></i> Recent Notifications</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="markAllRead()">
+                        Mark All Read
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="notifications" class="list-group list-group-flush">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-primary w-100" onclick="window.location.href='/'">
+                                <i class="fas fa-search"></i> New Analysis
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-success w-100" onclick="window.location.href='/gallery/'">
+                                <i class="fas fa-upload"></i> Upload Image
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-info w-100" onclick="window.location.href='/results/'">
+                                <i class="fas fa-user"></i> View Results
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-warning w-100" onclick="window.location.href='/gallery/'">
+                                <i class="fas fa-th"></i> View Gallery
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Load dashboard data
+async function loadDashboardData() {
+    try {
+        // Load analytics
+        const analyticsResponse = await axios.get('/api/analytics/dashboard/');
+        const data = analyticsResponse.data;
+        
+        document.getElementById('totalImages').textContent = data.total_images || 0;
+        document.getElementById('totalAnalyses').textContent = data.total_analyses || 0;
+        
+        // Load body analysis summary
+        const summaryResponse = await axios.get('/api/body-analyses/summary/');
+        const summaryData = summaryResponse.data;
+        document.getElementById('avgConfidence').textContent = (summaryData.average_confidence || 0).toFixed(1) + '%';
+        
+        // Create body shape chart
+        createBodyShapeChart(summaryData.body_shape_distribution || {});
+        renderFitVersions(summaryData.body_shape_distribution || {});
+        
+        // Load recent analyses
+        loadRecentAnalyses();
+        
+        // Load recent uploads
+        loadRecentUploads();
+        
+        // Load notifications
+        loadNotifications();
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        showNotification('Error loading dashboard data. Please login.', 'danger');
+        if (error.response && error.response.status === 401) {
+            setTimeout(() => {
+                window.location.href = '/login/';
+            }, 2000);
+        }
+    }
+}
+
+// Create body shape chart
+function createBodyShapeChart(distribution) {
+    const ctx = document.getElementById('bodyShapeChart').getContext('2d');
+    const labels = Object.keys(distribution);
+    const data = Object.values(distribution);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Body Shape Count',
+                data: data,
+                backgroundColor: [
+                    'rgba(102, 126, 234, 0.8)',
+                    'rgba(118, 75, 162, 0.8)',
+                    'rgba(72, 187, 120, 0.8)',
+                    'rgba(245, 101, 101, 0.8)',
+                    'rgba(237, 137, 54, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(102, 126, 234, 1)',
+                    'rgba(118, 75, 162, 1)',
+                    'rgba(72, 187, 120, 1)',
+                    'rgba(245, 101, 101, 1)',
+                    'rgba(237, 137, 54, 1)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Create style preferences chart
+function createStyleChart() {
+    const ctx = document.getElementById('styleChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Casual', 'Formal', 'Sporty', 'Vintage', 'Trendy'],
+            datasets: [{
+                data: [30, 20, 25, 15, 10],
+                backgroundColor: [
+                    'rgba(102, 126, 234, 0.8)',
+                    'rgba(118, 75, 162, 0.8)',
+                    'rgba(72, 187, 120, 0.8)',
+                    'rgba(245, 101, 101, 0.8)',
+                    'rgba(237, 137, 54, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(102, 126, 234, 1)',
+                    'rgba(118, 75, 162, 1)',
+                    'rgba(72, 187, 120, 1)',
+                    'rgba(245, 101, 101, 1)',
+                    'rgba(237, 137, 54, 1)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function renderFitVersions(distribution) {
+    const versions = [
+        {
+            shape: 'Hourglass',
+            title: 'Balanced Curve Version',
+            image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=700&q=80',
+            advice: 'Wrap dresses, belted jackets, tailored knits, and pencil skirts.'
+        },
+        {
+            shape: 'Pear',
+            title: 'Lower Curve Version',
+            image: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=700&q=80',
+            advice: 'Structured shoulders, bright tops, A-line skirts, and straight-leg trousers.'
+        },
+        {
+            shape: 'Apple',
+            title: 'Soft Midline Version',
+            image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=80',
+            advice: 'V-necks, long layers, empire seams, and clean vertical lines.'
+        },
+        {
+            shape: 'Rectangle',
+            title: 'Straight Frame Version',
+            image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=80',
+            advice: 'Peplum tops, ruching, cropped jackets, and fit-and-flare dresses.'
+        },
+        {
+            shape: 'Inverted Triangle',
+            title: 'Strong Shoulder Version',
+            image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=700&q=80',
+            advice: 'Simple necklines, wide-leg trousers, full skirts, and darker tops.'
+        }
+    ];
+
+    const preferredShape = Object.entries(distribution).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const container = document.getElementById('dressRecommendations');
+    container.innerHTML = versions.map(version => `
+        <div class="col-md-6 col-xl-4 mb-3">
+            <div class="card h-100 ${preferredShape === version.shape ? 'border-primary' : ''}">
+                <img src="${version.image}" alt="${version.shape} outfit example" class="card-img-top" style="height: 190px; object-fit: cover;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <h6 class="mb-1">${version.title}</h6>
+                            <span class="badge bg-light text-dark">${version.shape}</span>
+                        </div>
+                        ${preferredShape === version.shape ? '<span class="badge bg-success">Recommended</span>' : ''}
+                    </div>
+                    <p class="small text-muted mt-3 mb-0">${version.advice}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Load recent analyses
+async function loadRecentAnalyses() {
+    try {
+        const response = await axios.get('/api/body-analyses/?ordering=-analyzed_at');
+        const analyses = response.data.results || response.data;
+        
+        const container = document.getElementById('recentAnalyses');
+        container.innerHTML = '';
+        
+        if (analyses.length === 0) {
+            container.innerHTML = '<p class="text-center text-muted py-4">No analyses yet</p>';
+            return;
+        }
+        
+        analyses.slice(0, 5).forEach(analysis => {
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'list-group-item list-group-item-action';
+            item.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">${analysis.body_shape}</h6>
+                        <small class="text-muted">Confidence: ${analysis.confidence_score.toFixed(1)}%</small>
+                    </div>
+                    <small class="text-muted">${new Date(analysis.analyzed_at).toLocaleDateString()}</small>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading recent analyses:', error);
+    }
+}
+
+// Load recent uploads
+async function loadRecentUploads() {
+    try {
+        const response = await axios.get('/api/fashion-images/?ordering=-uploaded_at');
+        const images = response.data.results || response.data;
+        
+        const container = document.getElementById('recentUploads');
+        container.innerHTML = '';
+        
+        if (images.length === 0) {
+            container.innerHTML = '<p class="text-center text-muted py-4">No uploads yet</p>';
+            return;
+        }
+        
+        images.slice(0, 5).forEach(image => {
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'list-group-item list-group-item-action';
+            item.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">${image.title}</h6>
+                        <small class="text-muted">${image.clothing_type} - ${image.style || 'N/A'}</small>
+                    </div>
+                    <small class="text-muted">${new Date(image.uploaded_at).toLocaleDateString()}</small>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading recent uploads:', error);
+    }
+}
+
+// Load notifications
+async function loadNotifications() {
+    try {
+        const response = await axios.get('/api/notifications/unread/');
+        const notifications = response.data.results || response.data;
+        
+        document.getElementById('unreadNotifications').textContent = notifications.length;
+        
+        const container = document.getElementById('notifications');
+        container.innerHTML = '';
+        
+        if (notifications.length === 0) {
+            container.innerHTML = '<p class="text-center text-muted py-4">No new notifications</p>';
+            return;
+        }
+        
+        notifications.slice(0, 5).forEach(notification => {
+            const item = document.createElement('div');
+            item.className = 'list-group-item';
+            item.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">${notification.title}</h6>
+                        <small class="text-muted">${notification.message}</small>
+                    </div>
+                    <small class="text-muted">${new Date(notification.created_at).toLocaleDateString()}</small>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+    }
+}
+
+// Mark all notifications as read
+async function markAllRead() {
+    try {
+        await axios.post('/api/notifications/mark_all_read/');
+        showNotification('All notifications marked as read', 'success');
+        loadNotifications();
+    } catch (error) {
+        console.error('Error marking notifications as read:', error);
+        showNotification('Error marking notifications as read', 'danger');
+    }
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
+    createStyleChart();
+});
+</script>
+{% endblock %}
